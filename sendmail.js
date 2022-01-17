@@ -26,6 +26,9 @@ module.exports = function (options) {
   const smtpHost = options.smtpHost || -1;
   const rejectUnauthorized = options.rejectUnauthorized;
   const autoEHLO = options.autoEHLO;
+
+  const sslCert = (options.ssl || {}).certificate;
+  const sslCertKey = (options.ssl || {}).certificateKey;
   
   /*
    *   邮件服务返回代码含义 Mail service return code Meaning
@@ -196,6 +199,12 @@ module.exports = function (options) {
                 rejectUnauthorized,
               };
 
+              // https://nodejs.org/api/tls.html#tlscreatesecurecontextoptions
+              if(sslCert && sslCertKey) {
+                opts.cert = sslCert;
+                opts.key = sslCertKey;
+              }
+              
               sock = connect(
                   opts,
                   () => {
